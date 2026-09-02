@@ -1,5 +1,3948 @@
 index.html
 <!DOCTYPE html>
 <html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport"
+      content="width=device-width,initial-scale=1,viewport-fit=cover,
+               maximum-scale=1,user-scalable=no">
+<meta name="theme-color" content="#0b0d0f">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Tarkov Tracker">
+<meta name="description" content="Escape from Tarkov V3 Quest, Item and Hideout Tracker">
+
+<title>Tarkov Tracker V3</title>
+
+<style>
+:root{
+  --bg:#090b0d;
+  --bg2:#101316;
+  --panel:#15191d;
+  --panel2:#1b2025;
+  --panel3:#22282e;
+  --border:#30373e;
+  --text:#e7ebee;
+  --muted:#8e989f;
+  --accent:#d7a84b;
+  --accent2:#f0c866;
+  --green:#61c17a;
+  --red:#d96565;
+  --blue:#62a7d8;
+  --purple:#a782d8;
+  --shadow:0 8px 25px rgba(0,0,0,.35);
+  --radius:14px;
+  --safe-bottom:env(safe-area-inset-bottom,0px);
+}
+
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+
+html,body{
+  margin:0;
+  padding:0;
+  width:100%;
+  min-height:100%;
+  background:var(--bg);
+  color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+}
+
+body{
+  overflow-x:hidden;
+  padding-bottom:calc(78px + var(--safe-bottom));
+}
+
+button,input,select,textarea{
+  font:inherit;
+}
+
+button{
+  border:0;
+  cursor:pointer;
+}
+
+.app{
+  width:100%;
+  max-width:1100px;
+  margin:auto;
+}
+
+header{
+  position:sticky;
+  top:0;
+  z-index:50;
+  background:rgba(9,11,13,.94);
+  backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--border);
+  padding:
+    calc(12px + env(safe-area-inset-top))
+    14px 12px;
+}
+
+.header-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+}
+
+.logo{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.logo-mark{
+  width:38px;
+  height:38px;
+  border-radius:10px;
+  display:grid;
+  place-items:center;
+  background:linear-gradient(135deg,#8c6b28,#d7a84b);
+  color:#101010;
+  font-weight:900;
+  font-size:17px;
+}
+
+.logo-title{
+  font-size:17px;
+  font-weight:800;
+}
+
+.logo-sub{
+  font-size:11px;
+  color:var(--muted);
+  margin-top:2px;
+}
+
+.header-actions{
+  display:flex;
+  gap:6px;
+}
+
+.icon-btn{
+  width:40px;
+  height:40px;
+  border-radius:10px;
+  background:var(--panel);
+  color:var(--text);
+  border:1px solid var(--border);
+}
+
+main{
+  padding:14px;
+}
+
+.view{
+  display:none;
+}
+
+.view.active{
+  display:block;
+}
+
+h1,h2,h3,p{
+  margin-top:0;
+}
+
+h2{
+  font-size:22px;
+  margin-bottom:4px;
+}
+
+h3{
+  font-size:16px;
+  margin-bottom:5px;
+}
+
+.subtitle{
+  color:var(--muted);
+  font-size:13px;
+  margin-bottom:15px;
+}
+
+.card{
+  background:linear-gradient(145deg,var(--panel),#121619);
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:14px;
+  box-shadow:var(--shadow);
+  margin-bottom:12px;
+}
+
+.card-header{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  margin-bottom:12px;
+}
+
+.card-title{
+  font-weight:800;
+}
+
+.grid{
+  display:grid;
+  gap:10px;
+}
+
+.grid-2{
+  grid-template-columns:repeat(2,minmax(0,1fr));
+}
+
+.grid-3{
+  grid-template-columns:repeat(3,minmax(0,1fr));
+}
+
+.stat{
+  background:var(--panel2);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:13px;
+}
+
+.stat-label{
+  font-size:11px;
+  color:var(--muted);
+  text-transform:uppercase;
+  letter-spacing:.6px;
+}
+
+.stat-value{
+  font-size:23px;
+  font-weight:900;
+  margin-top:5px;
+}
+
+.stat-small{
+  font-size:12px;
+  color:var(--muted);
+  margin-top:3px;
+}
+
+.progress{
+  height:8px;
+  background:#080a0c;
+  border-radius:20px;
+  overflow:hidden;
+  margin-top:9px;
+}
+
+.progress > div{
+  height:100%;
+  width:0;
+  background:var(--accent);
+  border-radius:20px;
+  transition:.25s;
+}
+
+.btn{
+  min-height:40px;
+  border-radius:10px;
+  padding:8px 13px;
+  background:var(--panel3);
+  color:var(--text);
+  border:1px solid var(--border);
+  font-weight:700;
+}
+
+.btn:active{
+  transform:scale(.98);
+}
+
+.btn.primary{
+  background:var(--accent);
+  color:#111;
+  border-color:var(--accent);
+}
+
+.btn.success{
+  background:rgba(97,193,122,.15);
+  color:var(--green);
+  border-color:rgba(97,193,122,.35);
+}
+
+.btn.danger{
+  color:var(--red);
+  border-color:rgba(217,101,101,.3);
+}
+
+.btn.small{
+  min-height:32px;
+  padding:5px 9px;
+  font-size:12px;
+}
+
+.input,
+select{
+  width:100%;
+  min-height:43px;
+  background:var(--panel2);
+  color:var(--text);
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:9px 11px;
+  outline:none;
+}
+
+.input:focus,
+select:focus{
+  border-color:var(--accent);
+}
+
+.search-row{
+  display:grid;
+  grid-template-columns:1fr auto;
+  gap:8px;
+  margin-bottom:10px;
+}
+
+.filter-row{
+  display:flex;
+  gap:7px;
+  overflow-x:auto;
+  padding-bottom:3px;
+  margin-bottom:12px;
+  scrollbar-width:none;
+}
+
+.filter-row::-webkit-scrollbar{
+  display:none;
+}
+
+.chip{
+  flex:0 0 auto;
+  background:var(--panel2);
+  color:var(--muted);
+  border:1px solid var(--border);
+  border-radius:20px;
+  padding:8px 12px;
+  font-size:12px;
+  font-weight:700;
+}
+
+.chip.active{
+  background:rgba(215,168,75,.14);
+  color:var(--accent2);
+  border-color:rgba(215,168,75,.45);
+}
+
+.list{
+  display:grid;
+  gap:8px;
+}
+
+.list-item{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  background:var(--panel2);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:11px;
+}
+
+.list-item-main{
+  flex:1;
+  min-width:0;
+}
+
+.list-item-title{
+  font-size:14px;
+  font-weight:800;
+  line-height:1.25;
+}
+
+.list-item-sub{
+  color:var(--muted);
+  font-size:11px;
+  margin-top:4px;
+  line-height:1.35;
+}
+
+.item-image{
+  width:48px;
+  height:48px;
+  object-fit:contain;
+  border-radius:8px;
+  background:#0b0e10;
+  flex:0 0 auto;
+}
+
+.badges{
+  display:flex;
+  flex-wrap:wrap;
+  gap:5px;
+  margin-top:6px;
+}
+
+.badge{
+  display:inline-flex;
+  align-items:center;
+  border-radius:6px;
+  padding:3px 6px;
+  font-size:10px;
+  font-weight:800;
+  background:#252b30;
+  color:#b9c1c6;
+}
+
+.badge.accent{
+  background:rgba(215,168,75,.13);
+  color:var(--accent2);
+}
+
+.badge.green{
+  background:rgba(97,193,122,.12);
+  color:var(--green);
+}
+
+.badge.red{
+  background:rgba(217,101,101,.12);
+  color:var(--red);
+}
+
+.badge.blue{
+  background:rgba(98,167,216,.12);
+  color:var(--blue);
+}
+
+.quest-card{
+  background:linear-gradient(145deg,var(--panel),#111518);
+  border:1px solid var(--border);
+  border-radius:13px;
+  padding:12px;
+}
+
+.quest-card.completed{
+  opacity:.62;
+}
+
+.quest-top{
+  display:flex;
+  gap:10px;
+}
+
+.quest-icon{
+  width:46px;
+  height:46px;
+  border-radius:9px;
+  object-fit:cover;
+  background:#080a0b;
+  flex:0 0 auto;
+}
+
+.quest-main{
+  flex:1;
+  min-width:0;
+}
+
+.quest-name{
+  font-weight:850;
+  font-size:14px;
+}
+
+.quest-meta{
+  font-size:11px;
+  color:var(--muted);
+  margin-top:4px;
+}
+
+.quest-actions{
+  display:flex;
+  gap:7px;
+  margin-top:10px;
+}
+
+.quest-actions .btn{
+  flex:1;
+}
+
+.check{
+  width:23px;
+  height:23px;
+  border-radius:7px;
+  border:1px solid var(--border);
+  background:#0b0d0f;
+  display:grid;
+  place-items:center;
+  color:transparent;
+  flex:0 0 auto;
+}
+
+.check.checked{
+  background:var(--green);
+  border-color:var(--green);
+  color:#0a0d0b;
+}
+
+.requirement{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  padding:9px 0;
+  border-bottom:1px solid rgba(255,255,255,.06);
+}
+
+.requirement:last-child{
+  border-bottom:0;
+}
+
+.requirement.ok{
+  color:var(--green);
+}
+
+.requirement.bad{
+  color:var(--red);
+}
+
+.quantity{
+  display:flex;
+  align-items:center;
+  gap:5px;
+}
+
+.quantity input{
+  width:65px;
+  min-height:35px;
+  text-align:center;
+}
+
+.bottom-nav{
+  position:fixed;
+  z-index:100;
+  bottom:0;
+  left:0;
+  right:0;
+  height:calc(66px + var(--safe-bottom));
+  padding-bottom:var(--safe-bottom);
+  background:rgba(13,16,18,.97);
+  border-top:1px solid var(--border);
+  backdrop-filter:blur(15px);
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+}
+
+.nav-btn{
+  background:none;
+  color:#687178;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:4px;
+  font-size:10px;
+  font-weight:800;
+}
+
+.nav-btn .nav-icon{
+  font-size:19px;
+}
+
+.nav-btn.active{
+  color:var(--accent2);
+}
+
+.modal-backdrop{
+  position:fixed;
+  inset:0;
+  z-index:200;
+  background:rgba(0,0,0,.72);
+  display:none;
+  align-items:flex-end;
+}
+
+.modal-backdrop.show{
+  display:flex;
+}
+
+.modal{
+  width:100%;
+  max-height:92vh;
+  overflow:auto;
+  background:#111518;
+  border:1px solid var(--border);
+  border-radius:20px 20px 0 0;
+  padding:16px;
+  padding-bottom:calc(20px + var(--safe-bottom));
+  box-shadow:0 -20px 60px rgba(0,0,0,.5);
+}
+
+.modal-header{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  align-items:flex-start;
+  margin-bottom:14px;
+}
+
+.close{
+  width:36px;
+  height:36px;
+  border-radius:9px;
+  background:var(--panel3);
+  color:var(--text);
+}
+
+.toast{
+  position:fixed;
+  z-index:500;
+  left:50%;
+  bottom:calc(82px + var(--safe-bottom));
+  transform:translateX(-50%) translateY(20px);
+  opacity:0;
+  pointer-events:none;
+  background:#20262b;
+  border:1px solid var(--border);
+  color:var(--text);
+  border-radius:10px;
+  padding:10px 14px;
+  font-size:12px;
+  font-weight:700;
+  transition:.2s;
+  max-width:90%;
+  text-align:center;
+}
+
+.toast.show{
+  opacity:1;
+  transform:translateX(-50%) translateY(0);
+}
+
+.loading{
+  text-align:center;
+  padding:35px 15px;
+  color:var(--muted);
+}
+
+.spinner{
+  width:28px;
+  height:28px;
+  margin:0 auto 10px;
+  border:3px solid #30363b;
+  border-top-color:var(--accent);
+  border-radius:50%;
+  animation:spin .8s linear infinite;
+}
+
+@keyframes spin{
+  to{transform:rotate(360deg)}
+}
+
+.empty{
+  text-align:center;
+  padding:28px 15px;
+  color:var(--muted);
+}
+
+.hero{
+  background:
+    radial-gradient(circle at top right,rgba(215,168,75,.18),transparent 40%),
+    linear-gradient(145deg,#181c20,#101316);
+}
+
+.hero-level{
+  display:flex;
+  align-items:center;
+  gap:15px;
+}
+
+.level-circle{
+  width:76px;
+  height:76px;
+  border-radius:50%;
+  border:3px solid var(--accent);
+  display:grid;
+  place-items:center;
+  font-size:27px;
+  font-weight:900;
+  color:var(--accent2);
+}
+
+.hero-info{
+  flex:1;
+}
+
+.hero-info h1{
+  font-size:21px;
+  margin-bottom:3px;
+}
+
+.mode{
+  color:var(--accent2);
+  font-size:12px;
+  font-weight:800;
+  text-transform:uppercase;
+}
+
+.recommendation{
+  display:flex;
+  gap:10px;
+  align-items:flex-start;
+  padding:10px;
+  border-radius:10px;
+  background:rgba(215,168,75,.08);
+  border:1px solid rgba(215,168,75,.18);
+  margin-bottom:8px;
+}
+
+.rec-icon{
+  font-size:20px;
+}
+
+.table-wrap{
+  overflow-x:auto;
+}
+
+table{
+  width:100%;
+  border-collapse:collapse;
+  font-size:12px;
+}
+
+th,td{
+  text-align:left;
+  padding:9px 7px;
+  border-bottom:1px solid var(--border);
+}
+
+th{
+  color:var(--muted);
+  font-size:10px;
+  text-transform:uppercase;
+}
+
+hr{
+  border:0;
+  border-top:1px solid var(--border);
+  margin:14px 0;
+}
+
+.small-muted{
+  font-size:11px;
+  color:var(--muted);
+}
+
+.data-status{
+  display:flex;
+  align-items:center;
+  gap:7px;
+  font-size:11px;
+  color:var(--muted);
+}
+
+.status-dot{
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  background:var(--red);
+}
+
+.status-dot.online{
+  background:var(--green);
+}
+
+@media(min-width:700px){
+  body{
+    padding-bottom:20px;
+  }
+
+  .bottom-nav{
+    position:static;
+    height:60px;
+    max-width:1100px;
+    margin:auto;
+    border:1px solid var(--border);
+    border-radius:14px;
+    margin-bottom:20px;
+  }
+
+  .modal-backdrop{
+    align-items:center;
+    justify-content:center;
+  }
+
+  .modal{
+    max-width:700px;
+    border-radius:18px;
+    padding-bottom:20px;
+  }
+
+  main{
+    padding:20px;
+  }
+
+  .grid-4{
+    grid-template-columns:repeat(4,minmax(0,1fr));
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+<header>
+  <div class="header-row">
+    <div class="logo">
+      <div class="logo-mark">TT</div>
+      <div>
+        <div class="logo-title">Tarkov Tracker</div>
+        <div class="logo-sub">V3 • PMC Progression</div>
+      </div>
+    </div>
+
+    <div class="header-actions">
+      <button class="icon-btn" onclick="openSettings()" aria-label="Settings">⚙️</button>
+    </div>
+  </div>
+</header>
+
+<main>
+
+<!-- DASHBOARD -->
+<section id="view-dashboard" class="view active">
+
+  <div class="card hero">
+    <div class="hero-level">
+      <div class="level-circle" id="dashLevel">1</div>
+      <div class="hero-info">
+        <h1 id="dashProfile">Main PMC</h1>
+        <div class="mode" id="dashMode">PVP</div>
+        <div class="small-muted" id="dashDataStatus">
+          Loading Tarkov data…
+        </div>
+      </div>
+      <button class="btn small" onclick="openSettings()">EDIT</button>
+    </div>
+
+    <div class="progress">
+      <div id="levelProgress"></div>
+    </div>
+  </div>
+
+  <div class="grid grid-2 grid-4">
+
+    <div class="stat">
+      <div class="stat-label">Quests</div>
+      <div class="stat-value" id="statQuests">0%</div>
+      <div class="stat-small" id="statQuestsSub">0 / 0</div>
+    </div>
+
+    <div class="stat">
+      <div class="stat-label">Kappa</div>
+      <div class="stat-value" id="statKappa">0%</div>
+      <div class="stat-small" id="statKappaSub">0 / 0</div>
+    </div>
+
+    <div class="stat">
+      <div class="stat-label">Hideout</div>
+      <div class="stat-value" id="statHideout">0%</div>
+      <div class="stat-small" id="statHideoutSub">0 stations</div>
+    </div>
+
+    <div class="stat">
+      <div class="stat-label">Needed Items</div>
+      <div class="stat-value" id="statItems">0</div>
+      <div class="stat-small">shortages</div>
+    </div>
+
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">🎯 What should I do next?</div>
+    </div>
+
+    <div id="recommendations">
+      <div class="loading">Analyzing progression…</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">Available Quests</div>
+      <button class="btn small" onclick="showView('quests')">VIEW ALL</button>
+    </div>
+
+    <div id="availableQuests"></div>
+  </div>
+
+</section>
+
+
+<!-- QUESTS -->
+<section id="view-quests" class="view">
+
+  <h2>Quests</h2>
+  <div class="subtitle">Track progression, prerequisites and Kappa requirements.</div>
+
+  <div class="search-row">
+    <input
+      id="questSearch"
+      class="input"
+      placeholder="Search quests, traders or maps…"
+      oninput="renderQuests()">
+    <button class="btn" onclick="clearQuestSearch()">✕</button>
+  </div>
+
+  <div class="filter-row">
+    <button class="chip active" data-qfilter="all" onclick="setQuestFilter('all')">All</button>
+    <button class="chip" data-qfilter="available" onclick="setQuestFilter('available')">Available</button>
+    <button class="chip" data-qfilter="incomplete" onclick="setQuestFilter('incomplete')">Incomplete</button>
+    <button class="chip" data-qfilter="completed" onclick="setQuestFilter('completed')">Completed</button>
+    <button class="chip" data-qfilter="kappa" onclick="setQuestFilter('kappa')">Kappa</button>
+    <button class="chip" data-qfilter="lightkeeper" onclick="setQuestFilter('lightkeeper')">Lightkeeper</button>
+  </div>
+
+  <div class="grid grid-2" style="margin-bottom:12px">
+    <select id="questTraderFilter" onchange="renderQuests()">
+      <option value="">All Traders</option>
+    </select>
+
+    <select id="questMapFilter" onchange="renderQuests()">
+      <option value="">All Maps</option>
+    </select>
+  </div>
+
+  <div id="questList"></div>
+
+</section>
+
+
+<!-- ITEMS -->
+<section id="view-items" class="view">
+
+  <h2>Item Tracker</h2>
+  <div class="subtitle">
+    Track owned quantities and Found-in-Raid quantities against quest and hideout requirements.
+  </div>
+
+  <div class="search-row">
+    <input
+      id="itemSearch"
+      class="input"
+      placeholder="Search items…"
+      oninput="renderItems()">
+    <button class="btn" onclick="clearItemSearch()">✕</button>
+  </div>
+
+  <div class="filter-row">
+    <button class="chip active" data-ifilter="all" onclick="setItemFilter('all')">All</button>
+    <button class="chip" data-ifilter="needed" onclick="setItemFilter('needed')">Needed</button>
+    <button class="chip" data-ifilter="shortage" onclick="setItemFilter('shortage')">Shortage</button>
+    <button class="chip" data-ifilter="fir" onclick="setItemFilter('fir')">FIR Needed</button>
+  </div>
+
+  <div class="card">
+    <div class="grid grid-3">
+      <div class="stat">
+        <div class="stat-label">Tracked</div>
+        <div class="stat-value" id="itemTracked">0</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Needed</div>
+        <div class="stat-value" id="itemNeeded">0</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Short</div>
+        <div class="stat-value" id="itemShort">0</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="itemList"></div>
+
+</section>
+
+
+<!-- HIDEOUT -->
+<section id="view-hideout" class="view">
+
+  <h2>Hideout</h2>
+  <div class="subtitle">Track station levels and requirements for your next upgrades.</div>
+
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">Hideout Progress</div>
+      <div id="hideoutPercent">0%</div>
+    </div>
+    <div class="progress">
+      <div id="hideoutProgress"></div>
+    </div>
+  </div>
+
+  <div id="hideoutList"></div>
+
+</section>
+
+
+<!-- MORE -->
+<section id="view-more" class="view">
+
+  <h2>More</h2>
+  <div class="subtitle">Maps, traders, Kappa, profiles and data management.</div>
+
+  <div class="grid grid-2">
+
+    <button class="card" onclick="openMaps()" style="text-align:left;color:var(--text)">
+      <h3>🗺️ Maps</h3>
+      <div class="small-muted">Raid information, bosses and quest locations.</div>
+    </button>
+
+    <button class="card" onclick="openTraders()" style="text-align:left;color:var(--text)">
+      <h3>💰 Traders</h3>
+      <div class="small-muted">Track trader reputation and levels.</div>
+    </button>
+
+    <button class="card" onclick="openKappa()" style="text-align:left;color:var(--text)">
+      <h3>🏆 Kappa</h3>
+      <div class="small-muted">Kappa-required quest progression.</div>
+    </button>
+
+    <button class="card" onclick="openPlanner()" style="text-align:left;color:var(--text)">
+      <h3>🧭 Planner</h3>
+      <div class="small-muted">Find the best next quests and upgrades.</div>
+    </button>
+
+    <button class="card" onclick="exportData()" style="text-align:left;color:var(--text)">
+      <h3>📤 Export</h3>
+      <div class="small-muted">Back up your tracker to JSON.</div>
+    </button>
+
+    <button class="card" onclick="importData()" style="text-align:left;color:var(--text)">
+      <h3>📥 Import</h3>
+      <div class="small-muted">Restore a previous tracker backup.</div>
+    </button>
+
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <div>
+        <div class="card-title">Live Data</div>
+        <div class="small-muted">Powered by tarkov.dev data.</div>
+      </div>
+      <button class="btn primary small" onclick="refreshData(true)">REFRESH</button>
+    </div>
+
+    <div class="data-status">
+      <span class="status-dot" id="statusDot"></span>
+      <span id="dataStatusText">Checking data…</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <div>
+        <div class="card-title">Profiles</div>
+        <div class="small-muted">Keep separate PvP/PvE progress.</div>
+      </div>
+      <button class="btn small" onclick="newProfile()">+ NEW</button>
+    </div>
+
+    <div id="profileList"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">About V3</div>
+    <p class="small-muted" style="margin-top:8px">
+      Single-file Tarkov progression tracker with local storage,
+      live game data, quest dependencies, quantity tracking,
+      hideout planning and multiple profiles.
+    </p>
+  </div>
+
+</section>
+
+</main>
+
+<!-- BOTTOM NAV -->
+<nav class="bottom-nav">
+  <button class="nav-btn active" data-view="dashboard" onclick="showView('dashboard')">
+    <span class="nav-icon">📊</span>
+    Dashboard
+  </button>
+
+  <button class="nav-btn" data-view="quests" onclick="showView('quests')">
+    <span class="nav-icon">📜</span>
+    Quests
+  </button>
+
+  <button class="nav-btn" data-view="items" onclick="showView('items')">
+    <span class="nav-icon">📦</span>
+    Items
+  </button>
+
+  <button class="nav-btn" data-view="hideout" onclick="showView('hideout')">
+    <span class="nav-icon">🔧</span>
+    Hideout
+  </button>
+
+  <button class="nav-btn" data-view="more" onclick="showView('more')">
+    <span class="nav-icon">☰</span>
+    More
+  </button>
+</nav>
+
+</div>
+
+
+<!-- MODAL -->
+<div class="modal-backdrop" id="modalBackdrop" onclick="modalOutside(event)">
+  <div class="modal" id="modalContent"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<input
+  type="file"
+  id="importFile"
+  accept=".json,application/json"
+  style="display:none"
+  onchange="handleImport(event)">
+
+
+<script>
+/* ============================================================
+   TARKOV TRACKER V3
+   SINGLE FILE EDITION
+   ============================================================ */
+
+const API_BASE = "https://json.tarkov.dev";
+const STORAGE_KEY = "tarkov_tracker_v3_state";
+const DB_NAME = "tarkov_tracker_v3_cache";
+const DB_VERSION = 1;
+
+let DATA = {
+  tasks: [],
+  items: [],
+  hideout: [],
+  maps: [],
+  traders: []
+};
+
+let questFilter = "all";
+let itemFilter = "all";
+let currentModal = null;
+
+
+/* ============================================================
+   STATE
+   ============================================================ */
+
+const DEFAULT_STATE = {
+  version: 3,
+  activeProfile: "Main PMC",
+
+  profiles: {
+    "Main PMC": {
+      name: "Main PMC",
+      mode: "regular",
+      level: 1,
+
+      quests: {},
+      objectives: {},
+
+      items: {},
+
+      hideout: {},
+
+      traders: {},
+
+      created: Date.now()
+    }
+  }
+};
+
+let STATE = loadState();
+
+function loadState(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+
+    if(!raw){
+      return structuredClone(DEFAULT_STATE);
+    }
+
+    const parsed = JSON.parse(raw);
+
+    if(!parsed.profiles){
+      return structuredClone(DEFAULT_STATE);
+    }
+
+    return parsed;
+  }catch(e){
+    console.error(e);
+    return structuredClone(DEFAULT_STATE);
+  }
+}
+
+function saveState(){
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(STATE));
+  updateDashboard();
+}
+
+function profile(){
+  return STATE.profiles[STATE.activeProfile];
+}
+
+
+/* ============================================================
+   INDEXED DB CACHE
+   ============================================================ */
+
+function openDB(){
+  return new Promise((resolve,reject)=>{
+    const request = indexedDB.open(DB_NAME, DB_VERSION);
+
+    request.onupgradeneeded = ()=>{
+      const db = request.result;
+
+      if(!db.objectStoreNames.contains("datasets")){
+        db.createObjectStore("datasets");
+      }
+    };
+
+    request.onsuccess = ()=>resolve(request.result);
+    request.onerror = ()=>reject(request.error);
+  });
+}
+
+async function cachePut(key,value){
+  try{
+    const db = await openDB();
+
+    return new Promise((resolve,reject)=>{
+      const tx = db.transaction("datasets","readwrite");
+      tx.objectStore("datasets").put({
+        saved:Date.now(),
+        data:value
+      },key);
+
+      tx.oncomplete = resolve;
+      tx.onerror = ()=>reject(tx.error);
+    });
+  }catch(e){
+    console.warn("Cache write failed",e);
+  }
+}
+
+async function cacheGet(key){
+  try{
+    const db = await openDB();
+
+    return new Promise((resolve,reject)=>{
+      const tx = db.transaction("datasets","readonly");
+      const req = tx.objectStore("datasets").get(key);
+
+      req.onsuccess = ()=>{
+        resolve(req.result || null);
+      };
+
+      req.onerror = ()=>reject(req.error);
+    });
+  }catch(e){
+    return null;
+  }
+}
+
+
+/* ============================================================
+   API
+   ============================================================ */
+
+function apiMode(){
+  return profile().mode === "pve" ? "pve" : "regular";
+}
+
+async function apiGet(endpoint){
+  const url = `${API_BASE}/${apiMode()}/${endpoint}`;
+
+  const controller = new AbortController();
+
+  const timeout = setTimeout(()=>{
+    controller.abort();
+  },15000);
+
+  try{
+    const response = await fetch(url,{
+      signal:controller.signal,
+      headers:{
+        Accept:"application/json"
+      },
+      cache:"no-cache"
+    });
+
+    if(!response.ok){
+      throw new Error(`${response.status} ${response.statusText}`);
+    }
+
+    return await response.json();
+
+  }finally{
+    clearTimeout(timeout);
+  }
+}
+
+
+/* ============================================================
+   DATA NORMALIZATION
+   ============================================================ */
+
+function asArray(value){
+  if(Array.isArray(value)) return value;
+
+  if(value && typeof value === "object"){
+    return Object.values(value);
+  }
+
+  return [];
+}
+
+function unwrap(payload,key){
+  if(!payload) return [];
+
+  if(Array.isArray(payload)){
+    return payload;
+  }
+
+  if(payload.data){
+
+    if(Array.isArray(payload.data)){
+      return payload.data;
+    }
+
+    if(payload.data[key]){
+      return asArray(payload.data[key]);
+    }
+
+    if(payload.data.data){
+      return asArray(payload.data.data);
+    }
+
+    return asArray(payload.data);
+  }
+
+  if(payload[key]){
+    return asArray(payload[key]);
+  }
+
+  return asArray(payload);
+}
+
+function entityName(value){
+  if(!value) return "";
+
+  if(typeof value === "string") return value;
+
+  return value.name ||
+         value.shortName ||
+         value.title ||
+         "";
+}
+
+function entityId(value){
+  if(!value) return "";
+
+  if(typeof value === "string") return value;
+
+  return value.id || "";
+}
+
+function taskMapName(task){
+  return entityName(task.map) ||
+    entityName(task.location) ||
+    (
+      task.objectives &&
+      task.objectives
+        .flatMap(o=>asArray(o.maps))
+        .map(entityName)
+        .filter(Boolean)[0]
+    ) ||
+    "Any";
+}
+
+function taskTraderName(task){
+  return entityName(task.trader) ||
+    entityName(task.faction) ||
+    "Unknown";
+}
+
+function normalizeTasks(payload){
+  return unwrap(payload,"tasks").map(t=>({
+    ...t,
+    id:t.id || crypto.randomUUID(),
+    name:t.name || "Unnamed Quest",
+    traderName:taskTraderName(t),
+    mapName:taskMapName(t),
+    objectives:asArray(t.objectives),
+    taskRequirements:asArray(t.taskRequirements),
+    kappaRequired:!!t.kappaRequired,
+    lightkeeperRequired:!!t.lightkeeperRequired,
+    minPlayerLevel:Number(t.minPlayerLevel || 1)
+  }));
+}
+
+function normalizeItems(payload){
+  return unwrap(payload,"items").map(i=>({
+    ...i,
+    id:i.id || crypto.randomUUID(),
+    name:i.name || i.shortName || "Unknown Item",
+    shortName:i.shortName || i.name || "",
+    iconLink:i.iconLink || i.imageLink || "",
+    avg24hPrice:i.avg24hPrice || i.lastLowPrice || 0
+  }));
+}
+
+function normalizeHideout(payload){
+  let arr = unwrap(payload,"hideoutStations");
+
+  if(!arr.length){
+    arr = unwrap(payload,"hideout");
+  }
+
+  return arr.map(s=>({
+    ...s,
+    id:s.id || crypto.randomUUID(),
+    name:s.name || "Unknown Station",
+    levels:asArray(s.levels)
+  }));
+}
+
+function normalizeMaps(payload){
+  return unwrap(payload,"maps").map(m=>({
+    ...m,
+    id:m.id || crypto.randomUUID(),
+    name:m.name || "Unknown Map"
+  }));
+}
+
+function normalizeTraders(payload){
+  return unwrap(payload,"traders").map(t=>({
+    ...t,
+    id:t.id || crypto.randomUUID(),
+    name:t.name || "Unknown Trader"
+  }));
+}
+
+
+/* ============================================================
+   LOAD DATA
+   ============================================================ */
+
+async function refreshData(force=false){
+
+  setDataStatus("Loading live Tarkov data…",false);
+
+  const mode = apiMode();
+  const cacheKey = `dataset-${mode}`;
+
+  if(!force){
+
+    const cached = await cacheGet(cacheKey);
+
+    if(cached && cached.data){
+
+      DATA = cached.data;
+
+      setDataStatus(
+        `Cached data loaded • ${timeAgo(cached.saved)}`,
+        true
+      );
+
+      renderEverything();
+
+      /* Refresh in background */
+      refreshData(true);
+
+      return;
+    }
+  }
+
+  try{
+
+    const results = await Promise.allSettled([
+      apiGet("tasks"),
+      apiGet("items"),
+      apiGet("hideout"),
+      apiGet("maps"),
+      apiGet("traders")
+    ]);
+
+    const tasks =
+      results[0].status === "fulfilled"
+      ? normalizeTasks(results[0].value)
+      : [];
+
+    const items =
+      results[1].status === "fulfilled"
+      ? normalizeItems(results[1].value)
+      : [];
+
+    const hideout =
+      results[2].status === "fulfilled"
+      ? normalizeHideout(results[2].value)
+      : [];
+
+    const maps =
+      results[3].status === "fulfilled"
+      ? normalizeMaps(results[3].value)
+      : [];
+
+    const traders =
+      results[4].status === "fulfilled"
+      ? normalizeTraders(results[4].value)
+      : [];
+
+    if(!tasks.length && !items.length){
+      throw new Error("No live data returned");
+    }
+
+    DATA = {
+      tasks,
+      items,
+      hideout,
+      maps,
+      traders
+    };
+
+    await cachePut(cacheKey,DATA);
+
+    setDataStatus(
+      `Live data loaded • ${new Date().toLocaleTimeString()}`,
+      true
+    );
+
+    renderEverything();
+
+  }catch(error){
+
+    console.error(error);
+
+    const cached = await cacheGet(cacheKey);
+
+    if(cached && cached.data){
+
+      DATA = cached.data;
+
+      setDataStatus(
+        "Live data unavailable • using cached data",
+        true
+      );
+
+      renderEverything();
+
+      toast("Using cached Tarkov data.");
+
+    }else{
+
+      setDataStatus(
+        "Unable to load Tarkov data",
+        false
+      );
+
+      renderEverything();
+
+      toast("Could not load live Tarkov data.");
+    }
+  }
+}
+
+
+/* ============================================================
+   TIME
+   ============================================================ */
+
+function timeAgo(timestamp){
+
+  const seconds =
+    Math.floor((Date.now()-timestamp)/1000);
+
+  if(seconds < 60){
+    return `${seconds}s ago`;
+  }
+
+  const minutes=Math.floor(seconds/60);
+
+  if(minutes < 60){
+    return `${minutes}m ago`;
+  }
+
+  const hours=Math.floor(minutes/60);
+
+  if(hours < 24){
+    return `${hours}h ago`;
+  }
+
+  return `${Math.floor(hours/24)}d ago`;
+}
+
+
+/* ============================================================
+   DATA STATUS
+   ============================================================ */
+
+function setDataStatus(text,online){
+
+  const textEl=document.getElementById("dataStatusText");
+  const dot=document.getElementById("statusDot");
+
+  if(textEl) textEl.textContent=text;
+
+  if(dot){
+    dot.classList.toggle("online",online);
+  }
+
+  const dash=document.getElementById("dashDataStatus");
+
+  if(dash){
+    dash.textContent=text;
+  }
+}
+
+
+/* ============================================================
+   VIEW NAVIGATION
+   ============================================================ */
+
+function showView(view){
+
+  document.querySelectorAll(".view").forEach(el=>{
+    el.classList.remove("active");
+  });
+
+  document
+    .getElementById(`view-${view}`)
+    ?.classList.add("active");
+
+  document.querySelectorAll(".nav-btn").forEach(btn=>{
+    btn.classList.toggle(
+      "active",
+      btn.dataset.view===view
+    );
+  });
+
+  window.scrollTo({
+    top:0,
+    behavior:"smooth"
+  });
+
+  if(view==="dashboard") updateDashboard();
+  if(view==="quests") renderQuests();
+  if(view==="items") renderItems();
+  if(view==="hideout") renderHideout();
+}
+
+
+/* ============================================================
+   DASHBOARD
+   ============================================================ */
+
+function completedQuestCount(){
+
+  return DATA.tasks.filter(
+    q=>!!profile().quests[q.id]
+  ).length;
+}
+
+function kappaTasks(){
+
+  return DATA.tasks.filter(
+    q=>q.kappaRequired
+  );
+}
+
+function kappaProgress(){
+
+  const list=kappaTasks();
+
+  if(!list.length){
+    return {
+      completed:0,
+      total:0,
+      percent:0
+    };
+  }
+
+  const completed=list.filter(
+    q=>!!profile().quests[q.id]
+  ).length;
+
+  return {
+    completed,
+    total:list.length,
+    percent:Math.round(completed/list.length*100)
+  };
+}
+
+function itemRequirements(){
+
+  const req={};
+
+  DATA.tasks.forEach(task=>{
+
+    if(profile().quests[task.id]) return;
+
+    asArray(task.objectives).forEach(obj=>{
+
+      const items =
+        asArray(obj.items).length
+        ? asArray(obj.items)
+        : obj.item
+          ? [obj.item]
+          : [];
+
+      items.forEach(item=>{
+
+        const id=entityId(item);
+
+        if(!id) return;
+
+        const count=
+          Number(
+            item.count ??
+            obj.count ??
+            obj.value ??
+            1
+          );
+
+        if(!req[id]){
+          req[id]={
+            quest:0,
+            fir:false,
+            tasks:[]
+          };
+        }
+
+        req[id].quest+=count;
+
+        if(
+          obj.foundInRaid === true ||
+          item.foundInRaid === true
+        ){
+          req[id].fir=true;
+        }
+
+        req[id].tasks.push(task.name);
+      });
+    });
+  });
+
+  /* Hideout requirements */
+
+  DATA.hideout.forEach(station=>{
+
+    const current=
+      Number(profile().hideout[station.id] || 0);
+
+    const next=
+      station.levels?.find(
+        l=>Number(l.level || l.levelNumber)===current+1
+      );
+
+    if(!next) return;
+
+    asArray(next.itemRequirements).forEach(r=>{
+
+      const item=r.item || r;
+
+      const id=entityId(item);
+
+      if(!id) return;
+
+      const count=Number(
+        r.count ||
+        r.quantity ||
+        1
+      );
+
+      if(!req[id]){
+        req[id]={
+          quest:0,
+          hideout:0,
+          fir:false,
+          tasks:[]
+        };
+      }
+
+      req[id].hideout=
+        (req[id].hideout || 0)+count;
+
+      if(
+        r.foundInRaid===true ||
+        r.fir===true
+      ){
+        req[id].fir=true;
+      }
+    });
+  });
+
+  return req;
+}
+
+function getItemInfo(id){
+
+  return DATA.items.find(
+    i=>i.id===id
+  );
+}
+
+function itemOwned(id){
+
+  return Number(
+    profile().items[id]?.owned || 0
+  );
+}
+
+function itemFIR(id){
+
+  return Number(
+    profile().items[id]?.fir || 0
+  );
+}
+
+function itemNeeded(id){
+
+  const req=itemRequirements()[id];
+
+  if(!req) return 0;
+
+  return Number(req.quest || 0)+
+         Number(req.hideout || 0);
+}
+
+function itemShortage(id){
+
+  return Math.max(
+    0,
+    itemNeeded(id)-itemOwned(id)
+  );
+}
+
+function hideoutProgress(){
+
+  if(!DATA.hideout.length){
+    return 0;
+  }
+
+  let current=0;
+  let max=0;
+
+  DATA.hideout.forEach(station=>{
+
+    const levels=station.levels || [];
+
+    max+=levels.length;
+
+    current+=Math.min(
+      Number(profile().hideout[station.id] || 0),
+      levels.length
+    );
+  });
+
+  return max
+    ? Math.round(current/max*100)
+    : 0;
+}
+
+function updateDashboard(){
+
+  const p=profile();
+
+  document.getElementById("dashLevel").textContent=p.level;
+  document.getElementById("dashProfile").textContent=p.name;
+  document.getElementById("dashMode").textContent=
+    p.mode==="pve" ? "PVE" : "PVP";
+
+  const total=DATA.tasks.length;
+  const completed=completedQuestCount();
+
+  const qPercent=total
+    ? Math.round(completed/total*100)
+    : 0;
+
+  const kp=kappaProgress();
+
+  document.getElementById("statQuests").textContent=
+    `${qPercent}%`;
+
+  document.getElementById("statQuestsSub").textContent=
+    `${completed} / ${total}`;
+
+  document.getElementById("statKappa").textContent=
+    `${kp.percent}%`;
+
+  document.getElementById("statKappaSub").textContent=
+    `${kp.completed} / ${kp.total}`;
+
+  const hp=hideoutProgress();
+
+  document.getElementById("statHideout").textContent=
+    `${hp}%`;
+
+  document.getElementById("statHideoutSub").textContent=
+    `${DATA.hideout.length} stations`;
+
+  const req=itemRequirements();
+
+  const shortages=
+    Object.keys(req).filter(
+      id=>itemShortage(id)>0
+    ).length;
+
+  document.getElementById("statItems").textContent=
+    shortages;
+
+  const levelPercent=Math.min(
+    100,
+    (p.level/70)*100
+  );
+
+  document.getElementById("levelProgress").style.width=
+    `${levelPercent}%`;
+
+  renderRecommendations();
+  renderAvailableQuests();
+}
+
+
+/* ============================================================
+   QUEST AVAILABILITY
+   ============================================================ */
+
+function questPrerequisitesMet(task){
+
+  const reqs=asArray(task.taskRequirements);
+
+  if(!reqs.length){
+    return true;
+  }
+
+  return reqs.every(req=>{
+
+    const prerequisite=
+      req.task ||
+      req.quest ||
+      req;
+
+    const id=entityId(prerequisite);
+
+    if(!id) return true;
+
+    const status=
+      String(req.status || "").toLowerCase();
+
+    if(
+      status &&
+      !status.includes("complete") &&
+      !status.includes("success")
+    ){
+      return true;
+    }
+
+    return !!profile().quests[id];
+  });
+}
+
+function questAvailable(task){
+
+  if(profile().quests[task.id]){
+    return false;
+  }
+
+  if(profile().level < task.minPlayerLevel){
+    return false;
+  }
+
+  return questPrerequisitesMet(task);
+}
+
+
+/* ============================================================
+   RECOMMENDATIONS
+   ============================================================ */
+
+function renderRecommendations(){
+
+  const el=document.getElementById("recommendations");
+
+  if(!DATA.tasks.length){
+    el.innerHTML=`
+      <div class="empty">
+        Load Tarkov data to generate recommendations.
+      </div>
+    `;
+    return;
+  }
+
+  const available=DATA.tasks
+    .filter(questAvailable)
+    .sort((a,b)=>{
+
+      if(a.kappaRequired!==b.kappaRequired){
+        return a.kappaRequired ? -1 : 1;
+      }
+
+      return a.minPlayerLevel-b.minPlayerLevel;
+    });
+
+  const recommendations=[];
+
+  available.slice(0,3).forEach(q=>{
+    recommendations.push({
+      icon:q.kappaRequired?"🏆":"📜",
+      title:q.name,
+      text:`${q.traderName} • ${q.mapName}`,
+      action:`openQuest('${q.id}')`
+    });
+  });
+
+  const req=itemRequirements();
+
+  Object.keys(req)
+    .filter(id=>itemShortage(id)>0)
+    .slice(0,2)
+    .forEach(id=>{
+
+      const item=getItemInfo(id);
+
+      if(item){
+        recommendations.push({
+          icon:"📦",
+          title:`Find ${item.name}`,
+          text:`Need ${itemShortage(id)} more`,
+          action:`showView('items')`
+        });
+      }
+    });
+
+  if(!recommendations.length){
+
+    el.innerHTML=`
+      <div class="recommendation">
+        <div class="rec-icon">✅</div>
+        <div>
+          <b>You're caught up.</b>
+          <div class="small-muted">
+            No immediate progression recommendation.
+          </div>
+        </div>
+      </div>
+    `;
+
+    return;
+  }
+
+  el.innerHTML=recommendations.map(r=>`
+    <button
+      class="recommendation"
+      style="width:100%;text-align:left;color:var(--text)"
+      onclick="${r.action}">
+      <div class="rec-icon">${r.icon}</div>
+      <div>
+        <b>${escapeHTML(r.title)}</b>
+        <div class="small-muted">${escapeHTML(r.text)}</div>
+      </div>
+    </button>
+  `).join("");
+}
+
+function renderAvailableQuests(){
+
+  const el=document.getElementById("availableQuests");
+
+  const available=DATA.tasks
+    .filter(questAvailable)
+    .sort((a,b)=>{
+
+      if(a.kappaRequired!==b.kappaRequired){
+        return a.kappaRequired ? -1 : 1;
+      }
+
+      return a.minPlayerLevel-b.minPlayerLevel;
+    })
+    .slice(0,5);
+
+  if(!available.length){
+
+    el.innerHTML=`
+      <div class="empty">
+        No quests currently available at level ${profile().level}.
+      </div>
+    `;
+
+    return;
+  }
+
+  el.innerHTML=available.map(q=>questHTML(q,true)).join("");
+}
+
+
+/* ============================================================
+   QUESTS
+   ============================================================ */
+
+function setQuestFilter(filter){
+
+  questFilter=filter;
+
+  document.querySelectorAll("[data-qfilter]").forEach(btn=>{
+    btn.classList.toggle(
+      "active",
+      btn.dataset.qfilter===filter
+    );
+  });
+
+  renderQuests();
+}
+
+function clearQuestSearch(){
+
+  document.getElementById("questSearch").value="";
+  renderQuests();
+}
+
+function populateQuestFilters(){
+
+  const traders=[
+    ...new Set(
+      DATA.tasks
+        .map(q=>q.traderName)
+        .filter(Boolean)
+    )
+  ].sort();
+
+  const maps=[
+    ...new Set(
+      DATA.tasks
+        .map(q=>q.mapName)
+        .filter(Boolean)
+    )
+  ].sort();
+
+  const trader=document.getElementById("questTraderFilter");
+  const map=document.getElementById("questMapFilter");
+
+  const oldTrader=trader.value;
+  const oldMap=map.value;
+
+  trader.innerHTML=
+    `<option value="">All Traders</option>`+
+    traders.map(t=>
+      `<option value="${escapeAttr(t)}">${escapeHTML(t)}</option>`
+    ).join("");
+
+  map.innerHTML=
+    `<option value="">All Maps</option>`+
+    maps.map(m=>
+      `<option value="${escapeAttr(m)}">${escapeHTML(m)}</option>`
+    ).join("");
+
+  trader.value=oldTrader;
+  map.value=oldMap;
+}
+
+function renderQuests(){
+
+  populateQuestFilters();
+
+  const el=document.getElementById("questList");
+
+  if(!DATA.tasks.length){
+
+    el.innerHTML=`
+      <div class="empty">
+        No quest data loaded.
+      </div>
+    `;
+
+    return;
+  }
+
+  const search=
+    document
+      .getElementById("questSearch")
+      .value
+      .trim()
+      .toLowerCase();
+
+  const trader=
+    document.getElementById("questTraderFilter").value;
+
+  const map=
+    document.getElementById("questMapFilter").value;
+
+  let quests=DATA.tasks.filter(q=>{
+
+    if(search){
+
+      const haystack=
+        `${q.name} ${q.traderName} ${q.mapName}`
+          .toLowerCase();
+
+      if(!haystack.includes(search)){
+        return false;
+      }
+    }
+
+    if(trader && q.traderName!==trader){
+      return false;
+    }
+
+    if(map && q.mapName!==map){
+      return false;
+    }
+
+    const done=!!profile().quests[q.id];
+
+    if(questFilter==="completed" && !done){
+      return false;
+    }
+
+    if(questFilter==="incomplete" && done){
+      return false;
+    }
+
+    if(questFilter==="available" && !questAvailable(q)){
+      return false;
+    }
+
+    if(questFilter==="kappa" && !q.kappaRequired){
+      return false;
+    }
+
+    if(questFilter==="lightkeeper" && !q.lightkeeperRequired){
+      return false;
+    }
+
+    return true;
+  });
+
+  quests.sort((a,b)=>{
+
+    const ad=!!profile().quests[a.id];
+    const bd=!!profile().quests[b.id];
+
+    if(ad!==bd) return ad ? 1 : -1;
+
+    if(a.kappaRequired!==b.kappaRequired){
+      return a.kappaRequired ? -1 : 1;
+    }
+
+    return a.name.localeCompare(b.name);
+  });
+
+  const MAX_RENDER=250;
+
+  if(!quests.length){
+
+    el.innerHTML=`
+      <div class="empty">
+        No quests match your filters.
+      </div>
+    `;
+
+    return;
+  }
+
+  const limited=quests.slice(0,MAX_RENDER);
+
+  el.innerHTML=
+    `<div class="small-muted" style="margin-bottom:8px">
+      Showing ${limited.length} of ${quests.length}
+    </div>`+
+    limited.map(q=>questHTML(q)).join("");
+}
+
+function questHTML(q,compact=false){
+
+  const done=!!profile().quests[q.id];
+
+  const image=
+    q.taskImageLink ||
+    q.imageLink ||
+    "";
+
+  return `
+    <div class="quest-card ${done?"completed":""}" style="margin-bottom:8px">
+
+      <div class="quest-top">
+
+        ${
+          image
+          ? `<img class="quest-icon" src="${escapeAttr(image)}" onerror="this.style.display='none'">`
+          : `<div class="quest-icon"></div>`
+        }
+
+        <div class="quest-main">
+
+          <div class="quest-name">
+            ${escapeHTML(q.name)}
+          </div>
+
+          <div class="quest-meta">
+            ${escapeHTML(q.traderName)}
+            •
+            ${escapeHTML(q.mapName)}
+            •
+            Level ${q.minPlayerLevel}
+          </div>
+
+          <div class="badges">
+
+            ${
+              q.kappaRequired
+              ? `<span class="badge accent">KAPPA</span>`
+              : ""
+            }
+
+            ${
+              q.lightkeeperRequired
+              ? `<span class="badge purple">LIGHTKEEPER</span>`
+              : ""
+            }
+
+            ${
+              questAvailable(q)
+              ? `<span class="badge green">AVAILABLE</span>`
+              : ""
+            }
+
+            ${
+              done
+              ? `<span class="badge green">COMPLETE</span>`
+              : ""
+            }
+
+          </div>
+
+        </div>
+
+        <button
+          class="check ${done?"checked":""}"
+          onclick="toggleQuest('${q.id}')">
+          ✓
+        </button>
+
+      </div>
+
+      ${
+        !compact
+        ? `
+          <div class="quest-actions">
+            <button
+              class="btn small"
+              onclick="openQuest('${q.id}')">
+              DETAILS
+            </button>
+
+            ${
+              q.wikiLink
+              ? `
+                <button
+                  class="btn small"
+                  onclick="window.open('${escapeAttr(q.wikiLink)}','_blank')">
+                  WIKI
+                </button>
+              `
+              : ""
+            }
+          </div>
+        `
+        : ""
+      }
+
+    </div>
+  `;
+}
+
+function toggleQuest(id){
+
+  profile().quests[id]=
+    !profile().quests[id];
+
+  saveState();
+
+  renderEverything();
+
+  toast(
+    profile().quests[id]
+      ? "Quest completed"
+      : "Quest marked incomplete"
+  );
+}
+
+
+/* ============================================================
+   QUEST MODAL
+   ============================================================ */
+
+function openQuest(id){
+
+  const q=DATA.tasks.find(
+    x=>x.id===id
+  );
+
+  if(!q) return;
+
+  const done=!!profile().quests[id];
+
+  let objectiveHTML="";
+
+  const objectives=asArray(q.objectives);
+
+  if(objectives.length){
+
+    objectiveHTML=`
+      <h3>Objectives</h3>
+      <div>
+        ${
+          objectives.map((obj,index)=>{
+
+            const oid=
+              obj.id ||
+              `${q.id}-objective-${index}`;
+
+            const objDone=
+              !!profile().objectives[oid];
+
+            const description=
+              obj.description ||
+              objectiveDescription(obj);
+
+            return `
+              <div class="requirement">
+
+                <div style="flex:1">
+                  <div>${escapeHTML(description)}</div>
+                  ${
+                    obj.maps?.length
+                    ? `<div class="small-muted">
+                        ${asArray(obj.maps).map(entityName).join(", ")}
+                       </div>`
+                    : ""
+                  }
+                </div>
+
+                <button
+                  class="check ${objDone?"checked":""}"
+                  onclick="toggleObjective('${oid}','${q.id}')">
+                  ✓
+                </button>
+
+              </div>
+            `;
+          }).join("")
+        }
+      </div>
+    `;
+  }
+
+  let prereqHTML="";
+
+  const prereqs=asArray(q.taskRequirements);
+
+  if(prereqs.length){
+
+    prereqHTML=`
+      <hr>
+      <h3>Prerequisites</h3>
+      ${
+        prereqs.map(req=>{
+
+          const task=
+            req.task ||
+            req.quest ||
+            req;
+
+          const id=entityId(task);
+          const name=entityName(task) || "Required Quest";
+
+          const met=
+            id
+            ? !!profile().quests[id]
+            : true;
+
+          return `
+            <div class="requirement ${met?"ok":"bad"}">
+              <span>${escapeHTML(name)}</span>
+              <b>${met?"✓":"✕"}</b>
+            </div>
+          `;
+        }).join("")
+      }
+    `;
+  }
+
+  let rewardsHTML="";
+
+  const rewards=[
+    ...asArray(q.startRewards?.items),
+    ...asArray(q.finishRewards?.items)
+  ];
+
+  if(rewards.length){
+
+    rewardsHTML=`
+      <hr>
+      <h3>Rewards</h3>
+      ${
+        rewards.slice(0,15).map(r=>{
+
+          const item=
+            r.item ||
+            r;
+
+          return `
+            <div class="requirement">
+              <span>${escapeHTML(entityName(item))}</span>
+              <b>×${Number(r.count || 1)}</b>
+            </div>
+          `;
+        }).join("")
+      }
+    `;
+  }
+
+  openModal(`
+    <div class="modal-header">
+
+      <div>
+        <div class="badges">
+          ${
+            q.kappaRequired
+            ? `<span class="badge accent">KAPPA</span>`
+            : ""
+          }
+
+          ${
+            q.lightkeeperRequired
+            ? `<span class="badge blue">LIGHTKEEPER</span>`
+            : ""
+          }
+        </div>
+
+        <h2 style="margin-top:8px">
+          ${escapeHTML(q.name)}
+        </h2>
+
+        <div class="small-muted">
+          ${escapeHTML(q.traderName)}
+          •
+          ${escapeHTML(q.mapName)}
+          •
+          Level ${q.minPlayerLevel}
+        </div>
+      </div>
+
+      <button class="close" onclick="closeModal()">✕</button>
+
+    </div>
+
+    <div class="card" style="margin-top:0">
+      <div class="grid grid-2">
+
+        <button
+          class="btn ${done?"danger":"success"}"
+          onclick="toggleQuest('${q.id}');closeModal()">
+          ${done?"MARK INCOMPLETE":"MARK COMPLETE"}
+        </button>
+
+        ${
+          q.wikiLink
+          ? `
+            <button
+              class="btn"
+              onclick="window.open('${escapeAttr(q.wikiLink)}','_blank')">
+              OPEN WIKI
+            </button>
+          `
+          : ""
+        }
+
+      </div>
+    </div>
+
+    ${objectiveHTML}
+
+    ${prereqHTML}
+
+    ${rewardsHTML}
+  `);
+}
+
+function toggleObjective(oid,qid){
+
+  profile().objectives[oid]=
+    !profile().objectives[oid];
+
+  saveState();
+
+  openQuest(qid);
+}
+
+function objectiveDescription(obj){
+
+  if(obj.description){
+    return obj.description;
+  }
+
+  if(obj.type){
+    return String(obj.type);
+  }
+
+  if(obj.items?.length){
+
+    return asArray(obj.items)
+      .map(i=>`${entityName(i)} ×${i.count || 1}`)
+      .join(", ");
+  }
+
+  return "Complete objective";
+}
+
+
+/* ============================================================
+   ITEMS
+   ============================================================ */
+
+function setItemFilter(filter){
+
+  itemFilter=filter;
+
+  document.querySelectorAll("[data-ifilter]").forEach(btn=>{
+    btn.classList.toggle(
+      "active",
+      btn.dataset.ifilter===filter
+    );
+  });
+
+  renderItems();
+}
+
+function clearItemSearch(){
+
+  document.getElementById("itemSearch").value="";
+  renderItems();
+}
+
+function renderItems(){
+
+  const el=document.getElementById("itemList");
+
+  if(!DATA.items.length){
+
+    el.innerHTML=`
+      <div class="empty">
+        No item data loaded.
+      </div>
+    `;
+
+    return;
+  }
+
+  const req=itemRequirements();
+
+  const search=
+    document
+      .getElementById("itemSearch")
+      .value
+      .trim()
+      .toLowerCase();
+
+  let items=DATA.items.filter(item=>{
+
+    if(search){
+
+      const hay=
+        `${item.name} ${item.shortName}`
+          .toLowerCase();
+
+      if(!hay.includes(search)){
+        return false;
+      }
+    }
+
+    const needed=itemNeeded(item.id);
+    const short=itemShortage(item.id);
+    const fir=itemFIR(item.id);
+
+    if(itemFilter==="needed" && needed<=0){
+      return false;
+    }
+
+    if(itemFilter==="shortage" && short<=0){
+      return false;
+    }
+
+    if(
+      itemFilter==="fir" &&
+      !(req[item.id]?.fir) 
+    ){
+      return false;
+    }
+
+    return true;
+  });
+
+  items.sort((a,b)=>{
+
+    const sa=itemShortage(a.id);
+    const sb=itemShortage(b.id);
+
+    if(sa!==sb) return sb-sa;
+
+    return a.name.localeCompare(b.name);
+  });
+
+  const neededCount=Object.keys(req).length;
+
+  const shortageCount=
+    Object.keys(req).filter(
+      id=>itemShortage(id)>0
+    ).length;
+
+  document.getElementById("itemTracked").textContent=
+    Object.keys(profile().items).length;
+
+  document.getElementById("itemNeeded").textContent=
+    neededCount;
+
+  document.getElementById("itemShort").textContent=
+    shortageCount;
+
+  if(!items.length){
+
+    el.innerHTML=`
+      <div class="empty">
+        No items match your filters.
+      </div>
+    `;
+
+    return;
+  }
+
+  const MAX=200;
+
+  items=items.slice(0,MAX);
+
+  el.innerHTML=items.map(item=>{
+
+    const r=req[item.id] || {};
+
+    const needed=
+      Number(r.quest || 0)+
+      Number(r.hideout || 0);
+
+    const owned=itemOwned(item.id);
+    const fir=itemFIR(item.id);
+    const shortage=Math.max(0,needed-owned);
+
+    return `
+      <div class="list-item">
+
+        ${
+          item.iconLink
+          ? `<img
+               class="item-image"
+               src="${escapeAttr(item.iconLink)}"
+               onerror="this.style.visibility='hidden'">`
+          : `<div class="item-image"></div>`
+        }
+
+        <div class="list-item-main">
+
+          <div class="list-item-title">
+            ${escapeHTML(item.name)}
+          </div>
+
+          <div class="list-item-sub">
+            Need ${needed}
+            •
+            Quest ${Number(r.quest || 0)}
+            •
+            Hideout ${Number(r.hideout || 0)}
+          </div>
+
+          <div class="badges">
+
+            ${
+              r.fir
+              ? `<span class="badge accent">FIR</span>`
+              : ""
+            }
+
+            ${
+              shortage
+              ? `<span class="badge red">SHORT ${shortage}</span>`
+              : needed
+                ? `<span class="badge green">READY</span>`
+                : ""
+            }
+
+          </div>
+
+        </div>
+
+        <div>
+
+          <div class="quantity">
+            <button
+              class="btn small"
+              onclick="changeItem('${item.id}','owned',-1)">
+              −
+            </button>
+
+            <input
+              value="${owned}"
+              inputmode="numeric"
+              onchange="setItemQty('${item.id}','owned',this.value)">
+
+            <button
+              class="btn small"
+              onclick="changeItem('${item.id}','owned',1)">
+              +
+            </button>
+          </div>
+
+          <div class="quantity" style="margin-top:5px">
+            <span class="small-muted" style="width:25px">FIR</span>
+
+            <button
+              class="btn small"
+              onclick="changeItem('${item.id}','fir',-1)">
+              −
+            </button>
+
+            <input
+              value="${fir}"
+              inputmode="numeric"
+              onchange="setItemQty('${item.id}','fir',this.value)">
+
+            <button
+              class="btn small"
+              onclick="changeItem('${item.id}','fir',1)">
+              +
+            </button>
+          </div>
+
+        </div>
+
+      </div>
+    `;
+  }).join("");
+}
+
+function changeItem(id,type,amount){
+
+  const current=
+    Number(profile().items[id]?.[type] || 0);
+
+  setItemQty(
+    id,
+    type,
+    Math.max(0,current+amount)
+  );
+}
+
+function setItemQty(id,type,value){
+
+  if(!profile().items[id]){
+    profile().items[id]={
+      owned:0,
+      fir:0
+    };
+  }
+
+  profile().items[id][type]=
+    Math.max(
+      0,
+      Number(value)||0
+    );
+
+  saveState();
+  renderItems();
+}
+
+
+/* ============================================================
+   HIDEOUT
+   ============================================================ */
+
+function renderHideout(){
+
+  const el=document.getElementById("hideoutList");
+
+  const percent=hideoutProgress();
+
+  document.getElementById("hideoutPercent").textContent=
+    `${percent}%`;
+
+  document.getElementById("hideoutProgress").style.width=
+    `${percent}%`;
+
+  if(!DATA.hideout.length){
+
+    el.innerHTML=`
+      <div class="empty">
+        No hideout data loaded.
+      </div>
+    `;
+
+    return;
+  }
+
+  el.innerHTML=DATA.hideout.map(station=>{
+
+    const levels=station.levels || [];
+
+    const current=Math.min(
+      Number(profile().hideout[station.id] || 0),
+      levels.length
+    );
+
+    const next=levels.find(
+      l=>Number(l.level || l.levelNumber)===current+1
+    );
+
+    let requirements="";
+
+    if(next){
+
+      const reqs=asArray(next.itemRequirements);
+
+      if(reqs.length){
+
+        requirements=`
+          <div style="margin-top:10px">
+            <div class="small-muted">
+              NEXT LEVEL REQUIREMENTS
+            </div>
+
+            ${
+              reqs.slice(0,8).map(r=>{
+
+                const item=r.item || r;
+                const id=entityId(item);
+                const need=Number(r.count || 1);
+                const owned=id ? itemOwned(id) : 0;
+                const ok=owned>=need;
+
+                return `
+                  <div class="requirement ${ok?"ok":"bad"}">
+                    <span>${escapeHTML(entityName(item))}</span>
+                    <b>${owned}/${need}</b>
+                  </div>
+                `;
+              }).join("")
+            }
+
+          </div>
+        `;
+      }
+
+      if(next.traderRequirements?.length){
+
+        requirements+=`
+          <div style="margin-top:8px">
+            <div class="small-muted">
+              TRADER REQUIREMENTS
+            </div>
+
+            ${
+              asArray(next.traderRequirements)
+                .map(r=>`
+                  <div class="requirement">
+                    <span>
+                      ${escapeHTML(
+                        entityName(r.trader || r)
+                      )}
+                    </span>
+                    <b>LL${r.level || r.value || "?"}</b>
+                  </div>
+                `).join("")
+            }
+          </div>
+        `;
+      }
+
+    }else{
+
+      requirements=`
+        <div class="badge green" style="margin-top:10px">
+          MAX LEVEL
+        </div>
+      `;
+    }
+
+    return `
+      <div class="card">
+
+        <div class="card-header">
+
+          <div>
+            <div class="card-title">
+              ${escapeHTML(station.name)}
+            </div>
+
+            <div class="small-muted">
+              Level ${current} / ${levels.length}
+            </div>
+          </div>
+
+          <div class="quantity">
+
+            <button
+              class="btn small"
+              onclick="changeHideout('${station.id}',-1)">
+              −
+            </button>
+
+            <button
+              class="btn small primary">
+              LV ${current}
+            </button>
+
+            <button
+              class="btn small"
+              onclick="changeHideout('${station.id}',1)">
+              +
+            </button>
+
+          </div>
+
+        </div>
+
+        <div class="progress">
+          <div style="width:${
+            levels.length
+            ? current/levels.length*100
+            : 0
+          }%"></div>
+        </div>
+
+        ${requirements}
+
+      </div>
+    `;
+
+  }).join("");
+}
+
+function changeHideout(id,amount){
+
+  const station=
+    DATA.hideout.find(s=>s.id===id);
+
+  if(!station) return;
+
+  const max=(station.levels || []).length;
+
+  const current=
+    Number(profile().hideout[id] || 0);
+
+  profile().hideout[id]=
+    Math.max(
+      0,
+      Math.min(max,current+amount)
+    );
+
+  saveState();
+  renderHideout();
+}
+
+
+/* ============================================================
+   MAPS
+   ============================================================ */
+
+function openMaps(){
+
+  const maps=DATA.maps;
+
+  openModal(`
+    <div class="modal-header">
+      <div>
+        <h2>Maps</h2>
+        <div class="small-muted">
+          Raid information and boss locations.
+        </div>
+      </div>
+      <button class="close" onclick="closeModal()">✕</button>
+    </div>
+
+    <input
+      class="input"
+      id="mapSearch"
+      placeholder="Search maps…"
+      oninput="filterMaps()">
+
+    <div id="mapModalList" style="margin-top:12px">
+      ${mapHTML(maps)}
+    </div>
+  `);
+}
+
+function filterMaps(){
+
+  const search=
+    document
+      .getElementById("mapSearch")
+      .value
+      .toLowerCase();
+
+  const maps=DATA.maps.filter(m=>
+    m.name.toLowerCase().includes(search)
+  );
+
+  document.getElementById("mapModalList").innerHTML=
+    mapHTML(maps);
+}
+
+function mapHTML(maps){
+
+  if(!maps.length){
+    return `<div class="empty">No maps found.</div>`;
+  }
+
+  return maps.map(map=>{
+
+    const bosses=
+      asArray(map.bosses);
+
+    const raidTime=
+      map.raidDuration ||
+      map.duration ||
+      "";
+
+    const players=
+      map.players ||
+      map.playerCount ||
+      "";
+
+    return `
+      <div class="card">
+
+        <div class="card-header">
+          <div>
+            <div class="card-title">
+              ${escapeHTML(map.name)}
+            </div>
+
+            <div class="badges">
+
+              ${
+                raidTime
+                ? `<span class="badge">
+                    ${escapeHTML(String(raidTime))} min
+                   </span>`
+                : ""
+              }
+
+              ${
+                players
+                ? `<span class="badge">
+                    ${escapeHTML(String(players))} players
+                   </span>`
+                : ""
+              }
+
+            </div>
+          </div>
+        </div>
+
+        ${
+          bosses.length
+          ? `
+            <div class="small-muted">BOSSES</div>
+            <div class="badges" style="margin-top:5px">
+              ${
+                bosses.map(b=>
+                  `<span class="badge red">
+                    ${escapeHTML(entityName(b))}
+                   </span>`
+                ).join("")
+              }
+            </div>
+          `
+          : `<div class="small-muted">No boss information.</div>`
+        }
+
+      </div>
+    `;
+
+  }).join("");
+}
+
+
+/* ============================================================
+   TRADERS
+   ============================================================ */
+
+function openTraders(){
+
+  openModal(`
+    <div class="modal-header">
+      <div>
+        <h2>Traders</h2>
+        <div class="small-muted">
+          Track your trader levels.
+        </div>
+      </div>
+
+      <button class="close" onclick="closeModal()">✕</button>
+    </div>
+
+    <div id="traderModalList">
+      ${traderHTML()}
+    </div>
+  `);
+}
+
+function traderHTML(){
+
+  if(!DATA.traders.length){
+    return `<div class="empty">No trader data loaded.</div>`;
+  }
+
+  return DATA.traders.map(trader=>{
+
+    const level=
+      Number(profile().traders[trader.id] || 1);
+
+    return `
+      <div class="list-item" style="margin-bottom:8px">
+
+        ${
+          trader.imageLink
+          ? `<img
+              class="item-image"
+              src="${escapeAttr(trader.imageLink)}">`
+          : `<div class="item-image"></div>`
+        }
+
+        <div class="list-item-main">
+          <div class="list-item-title">
+            ${escapeHTML(trader.name)}
+          </div>
+
+          <div class="list-item-sub">
+            Trader Level
+          </div>
+        </div>
+
+        <div class="quantity">
+
+          <button
+            class="btn small"
+            onclick="changeTrader('${trader.id}',-1)">
+            −
+          </button>
+
+          <div
+            style="min-width:30px;text-align:center;font-weight:900">
+            LL${level}
+          </div>
+
+          <button
+            class="btn small"
+            onclick="changeTrader('${trader.id}',1)">
+            +
+          </button>
+
+        </div>
+
+      </div>
+    `;
+  }).join("");
+}
+
+function changeTrader(id,amount){
+
+  const current=
+    Number(profile().traders[id] || 1);
+
+  profile().traders[id]=
+    Math.max(
+      1,
+      Math.min(4,current+amount)
+    );
+
+  saveState();
+
+  document.getElementById("traderModalList").innerHTML=
+    traderHTML();
+}
+
+
+/* ============================================================
+   KAPPA
+   ============================================================ */
+
+function openKappa(){
+
+  const list=kappaTasks();
+
+  const completed=list.filter(
+    q=>profile().quests[q.id]
+  ).length;
+
+  const percent=list.length
+    ? Math.round(completed/list.length*100)
+    : 0;
+
+  openModal(`
+    <div class="modal-header">
+
+      <div>
+        <h2>🏆 Kappa Tracker</h2>
+        <div class="small-muted">
+          ${completed} / ${list.length} complete
+        </div>
+      </div>
+
+      <button class="close" onclick="closeModal()">✕</button>
+
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <b>Progress</b>
+        <b>${percent}%</b>
+      </div>
+
+      <div class="progress">
+        <div style="width:${percent}%"></div>
+      </div>
+    </div>
+
+    <div>
+      ${
+        list.map(q=>questHTML(q)).join("")
+      }
+    </div>
+  `);
+}
+
+
+/* ============================================================
+   PLANNER
+   ============================================================ */
+
+function openPlanner(){
+
+  const available=DATA.tasks
+    .filter(questAvailable)
+    .sort((a,b)=>{
+
+      if(a.kappaRequired!==b.kappaRequired){
+        return a.kappaRequired ? -1 : 1;
+      }
+
+      return a.minPlayerLevel-b.minPlayerLevel;
+    });
+
+  const req=itemRequirements();
+
+  const shortages=Object.keys(req)
+    .filter(id=>itemShortage(id)>0)
+    .map(id=>({
+      item:getItemInfo(id),
+      short:itemShortage(id)
+    }))
+    .filter(x=>x.item)
+    .sort((a,b)=>b.short-a.short);
+
+  openModal(`
+    <div class="modal-header">
+
+      <div>
+        <h2>🧭 Progression Planner</h2>
+        <div class="small-muted">
+          PMC Level ${profile().level}
+        </div>
+      </div>
+
+      <button class="close" onclick="closeModal()">✕</button>
+
+    </div>
+
+    <h3>Recommended Quests</h3>
+
+    ${
+      available.length
+      ? available.slice(0,15)
+          .map(q=>questHTML(q))
+          .join("")
+      : `<div class="empty">No available quests.</div>`
+    }
+
+    <hr>
+
+    <h3>Biggest Item Shortages</h3>
+
+    ${
+      shortages.length
+      ? shortages.slice(0,15).map(x=>`
+          <div class="requirement bad">
+            <span>${escapeHTML(x.item.name)}</span>
+            <b>−${x.short}</b>
+          </div>
+        `).join("")
+      : `<div class="empty">No item shortages.</div>`
+    }
+
+  `);
+}
+
+
+/* ============================================================
+   PROFILES
+   ============================================================ */
+
+function renderProfiles(){
+
+  const el=document.getElementById("profileList");
+
+  el.innerHTML=
+    Object.values(STATE.profiles).map(p=>{
+
+      const active=
+        p.name===STATE.activeProfile;
+
+      return `
+        <div class="list-item" style="margin-bottom:8px">
+
+          <div class="list-item-main">
+
+            <div class="list-item-title">
+              ${escapeHTML(p.name)}
+            </div>
+
+            <div class="list-item-sub">
+              ${p.mode==="pve"?"PvE":"PvP"}
+              • Level ${p.level}
+            </div>
+
+          </div>
+
+          ${
+            active
+            ? `<span class="badge green">ACTIVE</span>`
+            : `
+              <button
+                class="btn small"
+                onclick="switchProfile('${escapeAttr(p.name)}')">
+                USE
+              </button>
+            `
+          }
+
+          ${
+            Object.keys(STATE.profiles).length>1
+            ? `
+              <button
+                class="btn small danger"
+                onclick="deleteProfile('${escapeAttr(p.name)}')">
+                ✕
+              </button>
+            `
+            : ""
+          }
+
+        </div>
+      `;
+    }).join("");
+}
+
+function newProfile(){
+
+  const name=prompt("Profile name:");
+
+  if(!name || !name.trim()) return;
+
+  const clean=name.trim();
+
+  if(STATE.profiles[clean]){
+    toast("Profile already exists.");
+    return;
+  }
+
+  const mode=
+    confirm("Use PvE mode for this profile?\n\nOK = PvE\nCancel = PvP")
+    ? "pve"
+    : "regular";
+
+  STATE.profiles[clean]={
+    name:clean,
+    mode,
+    level:1,
+    quests:{},
+    objectives:{},
+    items:{},
+    hideout:{},
+    traders:{},
+    created:Date.now()
+  };
+
+  STATE.activeProfile=clean;
+
+  saveState();
+
+  refreshData(true);
+  renderProfiles();
+
+  toast(`Created ${clean}`);
+}
+
+function switchProfile(name){
+
+  if(!STATE.profiles[name]) return;
+
+  STATE.activeProfile=name;
+
+  saveState();
+
+  closeModal();
+
+  DATA={
+    tasks:[],
+    items:[],
+    hideout:[],
+    maps:[],
+    traders:[]
+  };
+
+  renderEverything();
+
+  refreshData(false);
+
+  toast(`Switched to ${name}`);
+}
+
+function deleteProfile(name){
+
+  if(Object.keys(STATE.profiles).length<=1){
+    toast("You must keep at least one profile.");
+    return;
+  }
+
+  if(!confirm(`Delete profile "${name}"?`)){
+    return;
+  }
+
+  delete STATE.profiles[name];
+
+  if(STATE.activeProfile===name){
+    STATE.activeProfile=
+      Object.keys(STATE.profiles)[0];
+  }
+
+  saveState();
+  renderProfiles();
+
+  toast("Profile deleted.");
+}
+
+
+/* ============================================================
+   SETTINGS
+   ============================================================ */
+
+function openSettings(){
+
+  const p=profile();
+
+  openModal(`
+    <div class="modal-header">
+      <div>
+        <h2>Settings</h2>
+        <div class="small-muted">
+          ${escapeHTML(p.name)}
+        </div>
+      </div>
+
+      <button class="close" onclick="closeModal()">✕</button>
+    </div>
+
+    <div class="card">
+
+      <label class="small-muted">PMC LEVEL</label>
+
+      <input
+        id="settingLevel"
+        class="input"
+        style="margin-top:6px"
+        type="number"
+        min="1"
+        max="70"
+        value="${p.level}">
+
+      <div style="height:10px"></div>
+
+      <label class="small-muted">GAME MODE</label>
+
+      <select
+        id="settingMode"
+        class="input"
+        style="margin-top:6px">
+
+        <option value="regular" ${p.mode==="regular"?"selected":""}>
+          PvP / Regular
+        </option>
+
+        <option value="pve" ${p.mode==="pve"?"selected":""}>
+          PvE
+        </option>
+
+      </select>
+
+      <button
+        class="btn primary"
+        style="width:100%;margin-top:12px"
+        onclick="saveSettings()">
+        SAVE SETTINGS
+      </button>
+
+    </div>
+
+    <div class="card">
+
+      <div class="card-title">Data</div>
+
+      <button
+        class="btn"
+        style="width:100%;margin-top:10px"
+        onclick="refreshData(true);closeModal()">
+        🔄 Refresh Tarkov Data
+      </button>
+
+      <button
+        class="btn danger"
+        style="width:100%;margin-top:8px"
+        onclick="resetProgress()">
+        ⚠️ Reset Current Profile
+      </button>
+
+    </div>
+
+    <div class="card">
+
+      <div class="card-title">Install</div>
+
+      <p class="small-muted" style="margin-top:7px">
+        On iPhone, open this app in Safari, tap Share,
+        then choose "Add to Home Screen".
+      </p>
+
+    </div>
+  `);
+}
+
+function saveSettings(){
+
+  const p=profile();
+
+  const newMode=
+    document.getElementById("settingMode").value;
+
+  const oldMode=p.mode;
+
+  p.level=Math.max(
+    1,
+    Math.min(
+      70,
+      Number(document.getElementById("settingLevel").value)||1
+    )
+  );
+
+  p.mode=newMode;
+
+  saveState();
+
+  closeModal();
+
+  if(oldMode!==newMode){
+
+    DATA={
+      tasks:[],
+      items:[],
+      hideout:[],
+      maps:[],
+      traders:[]
+    };
+
+    renderEverything();
+
+    refreshData(true);
+
+  }else{
+
+    renderEverything();
+  }
+
+  toast("Settings saved.");
+}
+
+function resetProgress(){
+
+  if(!confirm(
+    "Reset ALL quest, item, hideout and trader progress for this profile?"
+  )){
+    return;
+  }
+
+  const p=profile();
+
+  p.level=1;
+  p.quests={};
+  p.objectives={};
+  p.items={};
+  p.hideout={};
+  p.traders={};
+
+  saveState();
+
+  closeModal();
+
+  renderEverything();
+
+  toast("Profile reset.");
+}
+
+
+/* ============================================================
+   IMPORT / EXPORT
+   ============================================================ */
+
+function exportData(){
+
+  const payload={
+    app:"Tarkov Tracker V3",
+    version:3,
+    exportedAt:new Date().toISOString(),
+    state:STATE
+  };
+
+  const blob=new Blob(
+    [JSON.stringify(payload,null,2)],
+    {type:"application/json"}
+  );
+
+  const url=URL.createObjectURL(blob);
+
+  const a=document.createElement("a");
+
+  a.href=url;
+  a.download=
+    `tarkov-tracker-v3-${new Date().toISOString().slice(0,10)}.json`;
+
+  a.click();
+
+  URL.revokeObjectURL(url);
+
+  toast("Backup exported.");
+}
+
+function importData(){
+
+  document.getElementById("importFile").click();
+}
+
+function handleImport(event){
+
+  const file=event.target.files[0];
+
+  if(!file) return;
+
+  const reader=new FileReader();
+
+  reader.onload=()=>{
+
+    try{
+
+      const parsed=
+        JSON.parse(reader.result);
+
+      const imported=
+        parsed.state || parsed;
+
+      if(!imported.profiles){
+        throw new Error("Invalid tracker file.");
+      }
+
+      if(!confirm(
+        "Import this backup? Your current tracker state will be replaced."
+      )){
+        return;
+      }
+
+      STATE=imported;
+
+      saveState();
+
+      renderEverything();
+
+      toast("Backup imported.");
+
+    }catch(error){
+
+      console.error(error);
+
+      toast("Invalid backup file.");
+    }
+
+    event.target.value="";
+  };
+
+  reader.readAsText(file);
+}
+
+
+/* ============================================================
+   MODAL
+   ============================================================ */
+
+function openModal(html){
+
+  currentModal=true;
+
+  document.getElementById("modalContent").innerHTML=html;
+
+  document
+    .getElementById("modalBackdrop")
+    .classList.add("show");
+
+  document.body.style.overflow="hidden";
+}
+
+function closeModal(){
+
+  currentModal=false;
+
+  document
+    .getElementById("modalBackdrop")
+    .classList.remove("show");
+
+  document.body.style.overflow="";
+}
+
+function modalOutside(event){
+
+  if(event.target.id==="modalBackdrop"){
+    closeModal();
+  }
+}
+
+
+/* ============================================================
+   TOAST
+   ============================================================ */
+
+let toastTimer;
+
+function toast(message){
+
+  const el=document.getElementById("toast");
+
+  el.textContent=message;
+  el.classList.add("show");
+
+  clearTimeout(toastTimer);
+
+  toastTimer=setTimeout(()=>{
+    el.classList.remove("show");
+  },2200);
+}
+
+
+/* ============================================================
+   UTILS
+   ============================================================ */
+
+function escapeHTML(value){
+
+  return String(value ?? "")
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
+}
+
+function escapeAttr(value){
+  return escapeHTML(value);
+}
+
+
+/* ============================================================
+   RENDER EVERYTHING
+   ============================================================ */
+
+function renderEverything(){
+
+  updateDashboard();
+  renderQuests();
+  renderItems();
+  renderHideout();
+  renderProfiles();
+}
+
+
+/* ============================================================
+   SERVICE WORKER HOOK
+   ============================================================ */
+
+/*
+  A true installable offline PWA requires a separately served
+  service worker file. This hook will automatically register
+  /sw.js if you later add it to the same folder.
+*/
+
+if(
+  "serviceWorker" in navigator &&
+  location.protocol!=="file:"
+){
+
+  window.addEventListener("load",()=>{
+
+    navigator.serviceWorker
+      .register("./sw.js")
+      .then(()=>{
+        console.log("Service worker registered.");
+      })
+      .catch(()=>{
+        console.log(
+          "No service worker installed. App still works normally."
+        );
+      });
+
+  });
+}
+
+
+/* ============================================================
+   STARTUP
+   ============================================================ */
+
+(function boot(){
+
+  renderEverything();
+
+  setDataStatus(
+    "Loading Tarkov data…",
+    false
+  );
+
+  refreshData(false);
+
+})();
+
+</script>
+
+</body>
 </html>
 Add Tarkov Tracker V3
